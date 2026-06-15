@@ -152,46 +152,55 @@ document.getElementById("days").textContent=String(Math.floor(distance/(1000*60*
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.getElementById('form2052858183');
       if (form) {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          
+        form.classList.remove('js-form-proccess');
+        form.removeAttribute('data-success-callback');
+        form.removeAttribute('data-formactiontype');
+        form.setAttribute('action', 'javascript:void(0)');
+
+        const submitButton = form.querySelector('button[type="button"], button[type="submit"]');
+
+        const sendWhatsappMessage = function() {
           const nameInput = form.querySelector('input[name="Your name"]');
           const foodInput = form.querySelector('input[name="Do have have any food intolerances?"]');
           const attendanceInput = form.querySelector('input[name="Will you come?"]');
-          
+
           const name = nameInput ? nameInput.value.trim() : '';
           const food = foodInput ? foodInput.value.trim() : '';
-          const attendance = attendanceInput ? attendanceInput.value : '';
-          
+          const attendance = attendanceInput ? attendanceInput.value.trim() : '';
+
           if (!name) {
             alert('Please enter your name.');
             return;
           }
-          
-          const inputsBox = form.querySelector('.t-form__inputsbox');
-          if (inputsBox) {
-            inputsBox.style.display = 'none';
+
+          if (!attendance) {
+            alert('Please select your RSVP response.');
+            return;
           }
-          
-          const successBox = form.querySelector('.js-successbox');
-          if (successBox) {
-            let message = 'Thank you, ' + name + '! ';
-            if (attendance.includes('Yes')) {
-              message += 'We are thrilled that you will join us for Shefali & Meghansh\'s wedding!';
-            } else if (attendance.includes('Unfortunately')) {
-              message += 'We are sorry you can\'t make it, but we appreciate you letting us know.';
-            } else {
-              message += 'Your RSVP response has been successfully saved.';
-            }
-            if (food) {
-              message += ' We have also noted your food intolerances: ' + food + '.';
-            }
-            
-            successBox.innerHTML = '<div style="background-color:#fffaf8; border: 1px solid #66021f; border-radius: 8px; padding: 20px; text-align: center; color: #3A3A3A; font-family:'newtemplate', Arial, sans-serif;"><p style="font-size: 18px; color: #66021f; font-weight: bold; margin: 0 0 10px 0;">RSVP Received</p><p style="font-size: 15px; margin: 0; line-height: 1.5;">' + message + '</p></div>';
-            successBox.style.display = 'block';
-          }
+
+          const messageLines = [
+            'Hello, here is a new RSVP submission:',
+            '',
+            'Name: ' + name,
+            'Attendance: ' + attendance,
+            'Food intolerances: ' + (food || 'None')
+          ];
+          const whatsappUrl = 'https://wa.me/917691892486?text=' + encodeURIComponent(messageLines.join('\n'));
+
+          window.open(whatsappUrl, '_blank');
+        };
+
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          return false;
         }, true);
+
+        if (submitButton) {
+          submitButton.type = 'button';
+          submitButton.addEventListener('click', sendWhatsappMessage);
+        }
       }
     });
     </script>
@@ -269,7 +278,7 @@ type="button"
 class="t-popup__close-wrapper t-popup__block-close-button"
 aria-label="Close dialog window"> <svg role="presentation" class="t-popup__close-icon" width="23px" height="23px" viewBox="0 0 23 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <g stroke="none" stroke-width="1" fill="#fff" fill-rule="evenodd"> <rect transform="translate(11.313708, 11.313708) rotate(-45.000000) translate(-11.313708, -11.313708) " x="10.3137085" y="-3.6862915" width="2" height="30"></rect> <rect transform="translate(11.313708, 11.313708) rotate(-315.000000) translate(-11.313708, -11.313708) " x="10.3137085" y="-3.6862915" width="2" height="30"></rect> </g> </svg> </button> </div> <style>@media screen and (max-width:560px){#rec2052858183 .t-popup__close-icon g{fill:#ffffff !important;}}</style> <style> #rec2052858183 .t-popup__container{border-radius:5px;overflow:hidden;}</style> <div class="t-popup__container t-width t-width_6"
 style="background-color:#fffaf8;" data-popup-type="702"> <div class="t702__wrapper"> <div class="t702__text-wrapper t-align_center"> <div class="t702__title t-title t-title_xxs" id="popuptitle_2052858183">Confirm Your Attendance</div> <div class="t702__descr t-descr t-descr_xs">Please RSVP to the Bansal family before June 20, 2026</div> </div> <form
-id="form2052858183" name='form2052858183' role="form" action='' method='POST' data-formactiontype="0" data-inputbox=".t-input-group" class="t-form js-form-proccess t-form_inputs-total_3 " data-success-callback="t702_onSuccess"> <!-- NO ONE SERVICES CONNECTED --> <!-- @classes t-title t-text t-btn --> <div class="js-successbox t-form__successbox t-text t-text_md"
+id="form2052858183" name='form2052858183' role="form" action='javascript:void(0)' method='POST' data-inputbox=".t-input-group" class="t-form t-form_inputs-total_3 "> <!-- NO ONE SERVICES CONNECTED --> <!-- @classes t-title t-text t-btn --> <div class="js-successbox t-form__successbox t-text t-text_md"
 aria-live="polite"
 style="display:none;"></div> <div
 class="t-form__inputsbox
@@ -331,7 +340,7 @@ aria-label="Form fill-in errors"> <ul
 role="list"
 class="t-form__errorbox-text t-text t-text_md"> <li class="t-form__errorbox-item js-rule-error js-rule-error-all"></li> <li class="t-form__errorbox-item js-rule-error js-rule-error-req"></li> <li class="t-form__errorbox-item js-rule-error js-rule-error-email"></li> <li class="t-form__errorbox-item js-rule-error js-rule-error-name"></li> <li class="t-form__errorbox-item js-rule-error js-rule-error-phone"></li> <li class="t-form__errorbox-item js-rule-error js-rule-error-minlength"></li> <li class="t-form__errorbox-item js-rule-error js-rule-error-string"></li> </ul> </div> <!--/noindex--> </div> <div class="t-form__submit"> <button
 class="t-submit t-btnflex t-btnflex_type_submit t-btnflex_md"
-type="submit" data-btneffects-first="btneffects-flash"><span class="t-btnflex__text">Submit</span> <style>#rec2052858183 .t-btnflex.t-btnflex_type_submit {color:#fffaf8;background-color:#66021f;--border-width:0px;border-style:none !important;border-radius:20px;box-shadow:none !important;font-family:newtemplate;font-weight:400;font-size:20px;transition-duration:0.2s;transition-property:background-color,color,border-color,box-shadow,opacity,transform,gap;transition-timing-function:ease-in-out;}</style></button> </div> </div> <div class="t-form__errorbox-bottom"> <!--noindex--> <div
+type="button" data-btneffects-first="btneffects-flash"><span class="t-btnflex__text">Submit</span> <style>#rec2052858183 .t-btnflex.t-btnflex_type_submit {color:#fffaf8;background-color:#66021f;--border-width:0px;border-style:none !important;border-radius:20px;box-shadow:none !important;font-family:newtemplate;font-weight:400;font-size:20px;transition-duration:0.2s;transition-property:background-color,color,border-color,box-shadow,opacity,transform,gap;transition-timing-function:ease-in-out;}</style></button> </div> </div> <div class="t-form__errorbox-bottom"> <!--noindex--> <div
 class="js-errorbox-all t-form__errorbox-wrapper"
 style="display:none;" data-nosnippet
 tabindex="-1"
