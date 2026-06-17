@@ -95,7 +95,8 @@ waitForButton('.popup-enter', function(enterButton) {
   const iconPlay = document.getElementById('icon-play');
   const iconPause = document.getElementById('icon-pause');
   let hasStartedFromOffset = false;
-  enterButton.addEventListener('click', function() {
+
+  function startInvitation() {
     audio.muted = false;
     if (!hasStartedFromOffset) {
       audio.currentTime = 0;
@@ -107,7 +108,54 @@ waitForButton('.popup-enter', function(enterButton) {
     }).catch(err => console.log('Audio play failed:', err));
     audioControl.style.visibility = 'visible';
     audioControl.style.opacity = '1';
-  });
+
+    // Force play background video(s)
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+      video.muted = true;
+      video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      video.setAttribute('muted', '');
+      video.loop = true;
+      video.setAttribute('loop', '');
+      video.play().then(() => {
+        console.log('Video started playing successfully');
+      }).catch(err => {
+        console.log('Video play failed:', err);
+      });
+      
+      // Auto-resume if it gets paused
+      video.addEventListener('pause', () => {
+        if (hasStartedFromOffset) {
+          video.play().catch(err => console.log('Video auto-resume play failed:', err));
+        }
+      });
+    });
+  }
+
+  enterButton.addEventListener('click', startInvitation);
+
+  // Also catch click on the text element "Click to open" just in case
+  const textButton = document.querySelector('[data-elem-id="1773926384566"]');
+  if (textButton) {
+    textButton.addEventListener('click', startInvitation);
+    textButton.style.cursor = 'pointer';
+  }
+
+  // Wake up video on any subsequent click or touch interaction if it is paused
+  const handleInteraction = () => {
+    if (hasStartedFromOffset) {
+      const videos = document.querySelectorAll('video');
+      videos.forEach(video => {
+        if (video.paused) {
+          video.play().catch(err => console.log('Interaction video play failed:', err));
+        }
+      });
+    }
+  };
+  document.addEventListener('click', handleInteraction);
+  document.addEventListener('touchstart', handleInteraction);
+
   audioControl.addEventListener('click', function() {
     if (audio.paused) {
       audio.play();
